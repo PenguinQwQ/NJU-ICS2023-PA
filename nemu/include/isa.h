@@ -32,7 +32,12 @@ void init_isa();
 extern CPU_state cpu;
 void isa_reg_display();
 word_t isa_reg_str2val(const char *name, bool *success);
-
+#define CSR_REGNUM (1 << 12) + 1
+#define MSTATUS_CSR_ID 0x300
+#define MTVEC_CSR_ID 0x305
+#define MEPC_CSR_ID 0x341
+#define MCAUSE_CSR_ID 0x342
+#define MTVAL_CSR_ID 0x343
 // exec
 struct Decode;
 int isa_exec_once(struct Decode *s);

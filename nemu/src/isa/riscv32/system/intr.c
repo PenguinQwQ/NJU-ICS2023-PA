@@ -14,13 +14,15 @@
 ***************************************************************************************/
 
 #include <isa.h>
-
+extern word_t csr_reg[CSR_REGNUM];
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
-  /* TODO: Trigger an interrupt/exception with ``NO''.
+  /* TODO: Trigger an interrupt/exception with ``NO''. 
    * Then return the address of the interrupt/exception vector.
    */
-
-  return 0;
+  //no is the exception number to be written to the csr reg
+  csr_reg[MCAUSE_CSR_ID] = NO;
+  csr_reg[MEPC_CSR_ID] = epc;
+  return csr_reg[MTVAL_CSR_ID];
 }
 
 word_t isa_query_intr() {

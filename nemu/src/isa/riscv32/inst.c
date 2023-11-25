@@ -33,6 +33,18 @@ enum {
   TYPE_N, // none
 };
 
+
+//define the CSR registers
+//add csr reg address
+
+word_t csr_reg[CSR_REGNUM];
+
+
+
+word_t isa_raise_intr(word_t NO, vaddr_t epc);
+
+
+
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
 #define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
@@ -40,7 +52,7 @@ enum {
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
 #define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 12) | (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1) | (BITS(i, 7, 7) << 11); } while(0)
 #define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 20) | (BITS(i, 30, 21) << 1) | (BITS(i, 20, 20) << 11) | (BITS(i, 19, 12) << 12); } while(0)
-
+#define csr_id(x) BITS(x,31,20) & BITMASK(12)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst.val;
@@ -162,7 +174,37 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem, R, R(rd) = (sword_t)src1 % (sword_t)src2);
   INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu, R, R(rd) = (word_t)src1 % (word_t)src2);
 
+// adding some csr instructions
 
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, isa_raise_intr(4, s->pc)); //ECALL
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
+                                                            if(rd != 0) //r is not x0, read and write!
+                                                            {
+                                                              word_t csr_index = csr_id(INSTPAT_INST(s));
+                                                              R(rd) = csr_reg[csr_index]; //read the csr id contect into rd
+                                                              csr_reg[csr_index] = (word_t)src1;
+                                                            }
+                                                            else
+                                                            {
+                                                              word_t csr_index = csr_id(INSTPAT_INST(s));
+                                                          //    R(rd) = csr_reg[csr_index]; //read the csr id contect into rd
+                                                              csr_reg[csr_index] = (word_t)src1;                                     
+                                                            }
+                                                            ); //CSRRW
+  INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs, I,
+                                                            if(BITS(INSTPAT_INST(s),19,15) != 0) //rd is not x0, read and write!
+                                                            {
+                                                              word_t csr_index = csr_id(INSTPAT_INST(s));
+                                                              R(rd) = csr_reg[csr_index]; //read the csr id contect into rd
+                                                              csr_reg[csr_index] |= (word_t)src1;
+                                                            }
+                                                            else
+                                                            {
+                                                              word_t csr_index = csr_id(INSTPAT_INST(s));
+                                                              R(rd) = csr_reg[csr_index]; //read the csr id contect into rd
+                                                          //    csr_reg[csr_index] |= (word_t)src1;                                     
+                                                            }
+                                                             ); //CSRRS
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
