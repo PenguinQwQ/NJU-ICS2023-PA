@@ -22,6 +22,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   //no is the exception number to be written to the csr reg
   csr_reg[MCAUSE_CSR_ID] = NO;
   csr_reg[MEPC_CSR_ID] = epc;
+  csr_reg[MSTATUS_CSR_ID] = 0x1800; //set status csr reg to 0x1800 for difftest match
   return csr_reg[MTVAL_CSR_ID];
 }
 
