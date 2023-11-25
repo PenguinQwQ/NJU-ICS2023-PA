@@ -53,6 +53,93 @@ static int cmd_q(char *args) {
   return -1;
 }
 
+
+static int cmd_si(char *args) {
+  char *arg = strtok(NULL, " ");
+  uint64_t steps = (args != NULL) ? (uint64_t)atoi(arg) : 1;
+  cpu_exec(steps);
+  return 0;
+}
+
+static int cmd_info(char *args)
+{
+  char *arg = strtok(NULL, " ");
+  if(arg == NULL) Log("The info arg should be r or w, not NULL\n");
+  else if(arg != NULL && strcmp(arg, "r") == 0) isa_reg_display();
+  else if(arg != NULL && strcmp(arg, "w") == 0) display_all_wp();
+  else Assert(0, "Should not use any option except for r or w in info command\n");
+//  if(arg == NULL || (*arg != 'r') || (*arg != 'w'))  Log("The info only supports register state observation or watchpoint observation, available usage is info r or info w");
+//  else if (*arg == 'r') isa_reg_display();
+  return 0;
+}
+
+
+word_t vaddr_read(vaddr_t addr, int len);
+
+static int cmd_x(char *args)
+{
+  char *num = strtok(NULL, " ");
+  if(num == NULL) 
+  {
+    Log("x pass NULL as num of bytes to scan, please use like x N <expr>");
+    return 0;
+  }
+  char *expr = strtok(NULL, " ");
+  if(expr == NULL)
+  {
+    Log("Please specify the expression of the address to scan, usage: x N <expr>");
+    return 0;
+  }
+  Log("Reading %d byte(s) start in %s addr: ", atoi(num), expr);
+  uint32_t nums = (uint32_t)atoi(num);
+  uint32_t vaddr_base = (uint32_t)strtoul(expr, NULL, 16);
+
+  for (uint32_t i = 0 ; i <= nums ; i++)
+    {
+      uint32_t val = (uint32_t)vaddr_read(vaddr_base + (i << 2), 4);
+      printf("0x%.8"PRIx32":  0x%.8"PRIx32"\n", vaddr_base + (i << 2), val); //use 0x.8 to display the leading zeros
+    }
+  return 0;
+}
+//debug: fault expr (1 + 2 * 3) -( 4 + 6 / 2) 
+
+
+static int cmd_p(char *args)
+{
+  bool suc = false;
+  unsigned int calc_result = 0;
+  if(args == NULL) Log("Invalid NULL expression, please specify the expression!");
+  else calc_result = expr(args, &suc);
+  if(suc) 
+  {
+    
+    printf("Decimal Unsigned Value:%"PRIu32"  Hexadecimal Value: 0x%.8x \n", calc_result, calc_result);
+    return 0;
+  }
+  else 
+  {
+    Log("Token extraction fault!");
+    return -1;
+  }
+}
+
+
+
+static int cmd_w(char *args)
+{
+  Assert(args != NULL, "Invalid watchpoint expression!");
+  WP *new_node = new_wp(args);
+  Assert(new_node != NULL, "Failed to alloc a watchpoint! WP pool is overflow!");
+  Log("New watchpoint NO: %d, on expression %s", new_node->NO, new_node->watch_expr);
+  return 0;
+}
+static int cmd_d(char *args)
+{
+  int no = atoi(args);
+  free_wp(find_no_WP(no));
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -65,7 +152,12 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-
+  { "si", "Execute single step instructions", cmd_si},
+  { "info", "Print program running status, e.g: using info r to display register state, and using info w to display watchpoint information", cmd_info},
+  { "x", "Usage: x N <expr>, Scan the memory begin with address calculated from <expr> and print successive N byte contents in hexadecimal.", cmd_x},
+  { "p", "Usage: p <expr>, e.g: p $eax+1. calculate the expression <expr> and print", cmd_p},
+  { "w", "Usage: w <expr>, setting watchpoint on <expr>, pause the procedure and print the expr whenever the expr varies value.", cmd_w},
+  { "d", "Usage: d N, delete the watchpoint with id N", cmd_d},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
