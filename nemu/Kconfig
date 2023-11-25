@@ -151,6 +151,30 @@ config ITRACE_COND
   string "Only trace instructions when the condition is true"
   default "true"
 
+config WATCHPOINT_COND
+  depends on TRACE
+  bool "Enable watchpoint tracer"
+  default "false"
+
+config IRINGBUF
+  depends on TRACE && ITRACE
+  bool "Enable the iringbuf tracer"
+  default "false"
+
+config MTRACE
+  depends on TRACE
+  bool "Enable the memory tracer"
+  default "false"
+
+config FTRACE
+  depends on TRACE
+  bool "Enable the function call tracer"
+  default "false"
+
+config DTRACE
+  depends on TRACE
+  bool "Enable the device tracer"
+  default "false"
 
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
