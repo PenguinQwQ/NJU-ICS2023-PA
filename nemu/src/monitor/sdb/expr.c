@@ -250,9 +250,9 @@ word_t eval(int l, int r) //calculate expr begin in l and end in r, so the solut
         bool suc;
         word_t val = isa_reg_str2val(tokens[l].str, &suc);
         if(suc) return val;
-        else Assert(0, "Reg analysis failure!");
+      //  else Assert(0, "Reg analysis failure!");
       }
-    Assert(0, "Should not reach here");
+  //  Assert(0, "Should not reach here");
     return 0;
   }
   //else, check if the parenthese can be taken off
