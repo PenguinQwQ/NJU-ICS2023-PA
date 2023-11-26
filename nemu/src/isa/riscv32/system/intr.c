@@ -23,7 +23,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   csr_reg[MCAUSE_CSR_ID] = NO;
   csr_reg[MEPC_CSR_ID] = epc;
   csr_reg[MSTATUS_CSR_ID] = 0x1800; //set status csr reg to 0x1800 for difftest match
-  return csr_reg[MTVEC_CSR_ID]; //fuck! spelling mtvec into mtval...
+  return csr_reg[MTVEC_CSR_ID];  //fuck! spelling mtvec into mtval...
 }
 
 word_t isa_query_intr() {
