@@ -5,10 +5,10 @@
 void do_syscall(Context *c);
 static Context* do_event(Event e, Context* c) {//The event handler functin
   switch (e.event) {
-    case YIELD_FLAG:
+    case YIELD_FLAG: //yield, simple yield
       printf("Yield!\n");
       break;
-    case SYSCALL_FLAG:
+    case SYSCALL_FLAG: //syscall flag, call do_syscall to handle the syscall
       printf("Syscall!\n");
       do_syscall(c);
       break;
@@ -19,7 +19,7 @@ static Context* do_event(Event e, Context* c) {//The event handler functin
 
 void init_irq(void) {
   Log("Initializing interrupt/exception handler...");
-  cte_init(do_event);
+  cte_init(do_event);//register do_event to hander irq
 }
 
 
