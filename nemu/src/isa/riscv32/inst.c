@@ -189,6 +189,7 @@ static int decode_exec(Decode *s) {
                                                               if(BITS(INSTPAT_INST(s), 19, 15) == 0)
                                                               {
                                                                 Log("The csr id is: %llu", csr_id(INSTPAT_INST(s)));
+                                                                Log("The rd is: %d", rd);
                                                                 R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; //read the csr id contect into rd
                                                               }
                                                            //   csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
