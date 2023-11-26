@@ -12,6 +12,7 @@ Context* __am_irq_handle(Context *c) {
       case -1: //yield a7 number(?
       //   printf("yield!\n");
          ev.event = EVENT_YIELD;
+         c->mepc += 4; //we add the 4 here!
          break;
       default: ev.event = EVENT_ERROR; break;
     }
