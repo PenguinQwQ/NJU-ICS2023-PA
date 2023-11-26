@@ -7,7 +7,6 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
-    if(c->mcause == 100) printf("No is valid!\n");
     
     switch (c->mcause) {
       case -2147480552:
