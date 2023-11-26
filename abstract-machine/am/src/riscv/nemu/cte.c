@@ -9,7 +9,7 @@ Context* __am_irq_handle(Context *c) {
     Event ev = {0};
     
     switch (c->mcause) {
-      case 11: //yield a7 number(?
+      case 11: //yield a7 number(? No from the Berkley RISC-V slide...
       //   printf("yield!\n");
          ev.event = EVENT_YIELD;
          c->mepc += 4; //we add the 4 here!
