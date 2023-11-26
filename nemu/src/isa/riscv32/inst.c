@@ -180,7 +180,9 @@ static int decode_exec(Decode *s) {
                                                             #ifdef CONFIG_ETRACE
                                                                 Log("Interruption ecall at pc %x", s->pc);
                                                             #endif                                                        
-                                                            s->dnpc = isa_raise_intr(11, s->pc)); //ECALL
+                                                            s->dnpc = isa_raise_intr(11, s->pc);
+                                                            
+                                                            ); //ECALL
   //TO Fix, maybe have potential bugs... 
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
                                                           /*    if(rd == 0)
@@ -216,7 +218,7 @@ static int decode_exec(Decode *s) {
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] |= (word_t)src1;
                                                            //   }
                                                              ); //CSRRS
-  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, R, s->dnpc = csr_reg[MEPC_CSR_ID]); //mret
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, R, s->dnpc = csr_reg[MEPC_CSR_ID]; csr_reg[MSTATUS_CSR_ID] &= (~0x1800); ); //mret
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
