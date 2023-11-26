@@ -177,11 +177,16 @@ static int decode_exec(Decode *s) {
 // adding some csr instructions
 
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(0, s->pc)); //ECALL
-  //TODO()!
+  //TODO
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
                                                               if(rd == 0)
                                                               {
                                                                 Log("The csr id is: %llu", csr_id(INSTPAT_INST(s)));
+                                                                csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
+                                                              }
+                                                              else
+                                                              {
+                                                                R(rd) = csr_reg[csr_id(INSTPAT_INST(s))];
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
                                                               }
                                                             ); //CSRRW
