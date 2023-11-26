@@ -200,6 +200,8 @@ static int decode_exec(Decode *s) {
                                                               }
                                                               else
                                                               {
+                                                                   Log("Write %d from csr id : %llu", csr_reg[csr_id(INSTPAT_INST(s))], csr_id(INSTPAT_INST(s)));
+                                                              
                                                                 R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; 
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] |= (word_t)src1;
                                                               }
