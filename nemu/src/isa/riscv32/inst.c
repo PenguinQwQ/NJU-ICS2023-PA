@@ -181,12 +181,12 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
                                                               if(rd == 0)
                                                               {
-                                                                Log("Write %d from reg %llu to csr id : %llu", (word_t)src1, BITS(INSTPAT_INST(s), 19,15), csr_id(INSTPAT_INST(s)));
+                                                                Log("Write %x from reg %llu to csr id : %llu", (word_t)src1, BITS(INSTPAT_INST(s), 19,15), csr_id(INSTPAT_INST(s)));
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
                                                               }
                                                               else
                                                               {
-                                                                Log("Write %d from reg %llu to csr id : %llu", (word_t)src1, BITS(INSTPAT_INST(s), 19,15), csr_id(INSTPAT_INST(s)));
+                                                                Log("Write %x from reg %llu to csr id : %llu", (word_t)src1, BITS(INSTPAT_INST(s), 19,15), csr_id(INSTPAT_INST(s)));
 
                                                                 R(rd) = csr_reg[csr_id(INSTPAT_INST(s))];
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
