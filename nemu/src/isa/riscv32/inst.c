@@ -178,32 +178,12 @@ static int decode_exec(Decode *s) {
 
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(0, s->snpc - 4)); //ECALL
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
-                                                            if(rd != 0) //r is not x0, read and write!
-                                                            {
-                                                              word_t csr_index = csr_id(INSTPAT_INST(s));
-                                                              R(rd) = csr_reg[csr_index]; //read the csr id contect into rd
-                                                              csr_reg[csr_index] = (word_t)src1;
-                                                            }
-                                                            else
-                                                            {
-                                                              word_t csr_index = csr_id(INSTPAT_INST(s));
-                                                          //    R(rd) = csr_reg[csr_index]; //read the csr id contect into rd
-                                                              csr_reg[csr_index] = (word_t)src1;                                     
-                                                            }
+                                                              R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; //read the csr id contect into rd
+                                                              csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
                                                             ); //CSRRW
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs, I,
-                                                            if(BITS(INSTPAT_INST(s),19,15) != 0) //rd is not x0, read and write!
-                                                            {
-                                                              word_t csr_index = csr_id(INSTPAT_INST(s));
-                                                              R(rd) = csr_reg[csr_index]; //read the csr id contect into rd
-                                                              csr_reg[csr_index] |= (word_t)src1;
-                                                            }
-                                                            else
-                                                            {
-                                                              word_t csr_index = csr_id(INSTPAT_INST(s));
-                                                              R(rd) = csr_reg[csr_index]; //read the csr id contect into rd
-                                                          //    csr_reg[csr_index] |= (word_t)src1;                                     
-                                                            }
+                                                              R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; //read the csr id contect into rd
+                                                              csr_reg[csr_id(INSTPAT_INST(s))] |= (word_t)src1;
                                                              ); //CSRRS
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
