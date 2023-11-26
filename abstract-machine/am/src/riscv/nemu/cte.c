@@ -11,7 +11,9 @@ Context* __am_irq_handle(Context *c) {
     switch (c->mcause) {
       case 11: //yield a7 number(? No from the Berkley RISC-V slide...
       //   printf("yield!\n");
-         ev.event = EVENT_YIELD;
+         if(c->GPR1 == -1)  ev.event = EVENT_YIELD;
+         else if(c->GPR1 >= 0) ev.event = EVENT_SYSCALL; //system call
+         else {} //none action
          c->mepc += 4; //we add the 4 here!
          break;
       default: ev.event = EVENT_ERROR; break;
