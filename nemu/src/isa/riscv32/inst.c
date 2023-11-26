@@ -176,15 +176,21 @@ static int decode_exec(Decode *s) {
 
 // adding some csr instructions
 
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(0, s->snpc)); //ECALL
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(0, s->pc)); //ECALL
+  //TODO()!
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
-                                                              Log("The csr id is: %llu", csr_id(INSTPAT_INST(s)));
-                                                            //  R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; //read the csr id contect into rd
-                                                              csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
+                                                              if(rd == 0)
+                                                              {
+                                                                Log("The csr id is: %llu", csr_id(INSTPAT_INST(s)));
+                                                                csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
+                                                              }
                                                             ); //CSRRW
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs, I,
-                                                              Log("The csr id is: %llu", csr_id(INSTPAT_INST(s)));
-                                                              R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; //read the csr id contect into rd
+                                                              if(BITS(INSTPAT_INST(s), 19, 15) == 0)
+                                                              {
+                                                                Log("The csr id is: %llu", csr_id(INSTPAT_INST(s)));
+                                                                R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; //read the csr id contect into rd
+                                                              }
                                                            //   csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
                                                              ); //CSRRS
 
