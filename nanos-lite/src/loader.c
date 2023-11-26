@@ -35,10 +35,30 @@ bool check_elf(Elf_Ehdr *elf_header)
 static uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Ehdr ehdr;
   //first we read the elf header into an ehdr
-  assert(ramdisk_read(&ehdr, 0, sizeof(ehdr)) == sizeof(ehdr));
+  assert(ramdisk_read((void *)&ehdr, 0, sizeof(ehdr)) == sizeof(ehdr));
   assert(check_elf(&ehdr) == true);
   printf("Pass the elf check, success load the elf header!\n");
-  return 0;
+  //We further process the phdr part, load PT_LOAD segment to its virtual address
+
+  ElfN_Off phoff = ehdr.e_phoff;
+  uint32_t phnum = ehdr.e_phnum;
+  uint32_t phentsize = ehdr.e_phentsize;
+  Elf_Phdr phdr;
+  for (uint32_t i = 1 ; i <= phnum ; i++)
+  {
+    ElfN_Off offset = phoff + (i - 1) * phentsize;
+    assert(ramdisk_read((void *)&phdr, offset, sizeof(phdr)) == sizeof(phdr));
+    if(phdr.p_type == PT_LOAD) //segments that we need to load!
+    {
+      ElfN_Off off = phdr.p_offset; // offset of the segment, in the file image
+      ElfN_Addr vaddr = phdr.p_vaddr; // the virtual address in memory, this image to be loaded
+      ElfN_Word filesz = phdr.p_filesz, memsz = phdr.p_memsz; //get the file size and memory size
+      assert(filesz <= memsz);
+      assert(ramdisk_read((void *)vaddr, off, filesz) <= memsz);
+      memset((void *)(vaddr + filesz), memsz - filesz, 0);
+    }
+  }
+  return ehdr.e_entry; //return the image procedure entry!
 }
 
 void naive_uload(PCB *pcb, const char *filename) {

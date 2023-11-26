@@ -5,7 +5,7 @@ extern uint8_t ramdisk_end;
 #define RAMDISK_SIZE ((&ramdisk_end) - (&ramdisk_start))
 
 /* The kernel is monolithic, therefore we do not need to
- * translate the address `buf' from the user process to
+ * translate the address `buf' from the user process to 
  * a physical one, which is necessary for a microkernel.
  */
 
