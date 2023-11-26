@@ -181,7 +181,7 @@ static int decode_exec(Decode *s) {
                                                                 Log("Interruption ecall at pc %x", s->pc);
                                                             #endif                                                        
                                                             s->dnpc = isa_raise_intr(11, s->pc)); //ECALL
-  //TO Fix, maybe have potential bugs...
+  //TO Fix, maybe have potential bugs... 
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
                                                           /*    if(rd == 0)
                                                               {
