@@ -177,7 +177,7 @@ static int decode_exec(Decode *s) {
 // adding some csr instructions
 
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(0, s->pc)); //ECALL
-  //TODO
+  //TO Fix, maybe have potential bugs...
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
                                                               if(rd == 0)
                                                               {
@@ -197,8 +197,13 @@ static int decode_exec(Decode *s) {
                                                                 Log("The rd is: %d", rd);
                                                                 R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; //read the csr id contect into rd
                                                               }
-                                                           //   csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
+                                                              else
+                                                              {
+                                                                R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; 
+                                                                csr_reg[csr_id(INSTPAT_INST(s))] |= (word_t)src1;
+                                                              }
                                                              ); //CSRRS
+  INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, R, s->dnpc = csr_reg[MEPC_CSR_ID]); //mret
 
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
