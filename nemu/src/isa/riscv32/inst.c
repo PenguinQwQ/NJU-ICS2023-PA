@@ -181,11 +181,13 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
                                                               if(rd == 0)
                                                               {
-                                                                Log("The csr id is: %llu", csr_id(INSTPAT_INST(s)));
+                                                                Log("Write %d to csr id : %llu", (word_t)src1, csr_id(INSTPAT_INST(s)));
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
                                                               }
                                                               else
                                                               {
+                                                                Log("Write %d to csr id : %llu", (word_t)src1, csr_id(INSTPAT_INST(s)));
+
                                                                 R(rd) = csr_reg[csr_id(INSTPAT_INST(s))];
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
                                                               }
@@ -193,8 +195,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs, I,
                                                               if(BITS(INSTPAT_INST(s), 19, 15) == 0)
                                                               {
-                                                                Log("The csr id is: %llu", csr_id(INSTPAT_INST(s)));
-                                                                Log("The rd is: %d", rd);
+                                                                Log("Write %d from csr id : %llu", csr_reg[csr_id(INSTPAT_INST(s))], csr_id(INSTPAT_INST(s)));
                                                                 R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; //read the csr id contect into rd
                                                               }
                                                               else
