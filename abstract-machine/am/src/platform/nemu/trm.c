@@ -11,7 +11,7 @@ Area heap = RANGE(&_heap_start, PMEM_END);
 static const char mainargs[] = MAINARGS;
 
 void putch(char ch) {
-  outb(SERIAL_PORT, ch);
+  outb(SERIAL_PORT, ch); //write char ch to SERIAL_PORT
 }
 
 void halt(int code) {
@@ -22,6 +22,6 @@ void halt(int code) {
 }
 
 void _trm_init() {
-  int ret = main(mainargs);
+  int ret = main(mainargs); // call the user procedure main function, and halt with its return value
   halt(ret);
 }
