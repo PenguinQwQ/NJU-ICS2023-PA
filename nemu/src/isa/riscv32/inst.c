@@ -176,10 +176,10 @@ static int decode_exec(Decode *s) {
 
 // adding some csr instructions
 
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(R(17), s->pc)); //ECALL
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(11, s->pc)); //ECALL
   //TO Fix, maybe have potential bugs...
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
-                                                              if(rd == 0)
+                                                          /*    if(rd == 0)
                                                               {
                                                                // Log("Write %x from reg %llu to csr id : %llu", (word_t)src1, BITS(INSTPAT_INST(s), 19,15), csr_id(INSTPAT_INST(s)));
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
@@ -187,23 +187,24 @@ static int decode_exec(Decode *s) {
                                                               else
                                                               {
                                                               //  Log("Write %x from reg %llu to csr id : %llu", (word_t)src1, BITS(INSTPAT_INST(s), 19,15), csr_id(INSTPAT_INST(s)));
-
+                                                          */
                                                                 R(rd) = csr_reg[csr_id(INSTPAT_INST(s))];
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] = (word_t)src1;
-                                                              }
+                                                          //   }
                                                             ); //CSRRW
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs, I,
-                                                              if(BITS(INSTPAT_INST(s), 19, 15) == 0)
+                                                           /*   if(BITS(INSTPAT_INST(s), 19, 15) == 0)
                                                               {
                                                               //  Log("Write %x from csr id : %llu to reg %d", csr_reg[csr_id(INSTPAT_INST(s))], csr_id(INSTPAT_INST(s)), rd);
                                                                 R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; //read the csr id contect into rd
                                                               }
                                                               else
                                                               {
+                                                                */
                                                              //   Log("Write %x from csr id : %llu to reg %d", csr_reg[csr_id(INSTPAT_INST(s))], csr_id(INSTPAT_INST(s)), rd);
                                                                 R(rd) = csr_reg[csr_id(INSTPAT_INST(s))]; 
                                                                 csr_reg[csr_id(INSTPAT_INST(s))] |= (word_t)src1;
-                                                              }
+                                                           //   }
                                                              ); //CSRRS
   INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, R, s->dnpc = csr_reg[MEPC_CSR_ID]); //mret
 
