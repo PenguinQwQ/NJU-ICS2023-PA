@@ -9,9 +9,10 @@ Context* __am_irq_handle(Context *c) {
     Event ev = {0};
     
     switch (c->mcause) {
-      case -2147480552:
-         printf("yield!");
-         ev.event = EVENT_ERROR;
+      case -1:
+         printf("yield!\n");
+         ev.event = EVENT_YIELD;
+         break;
       default: ev.event = EVENT_ERROR; break;
     }
 
