@@ -176,7 +176,7 @@ static int decode_exec(Decode *s) {
 
 // adding some csr instructions
 
-  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(0, s->pc)); //ECALL
+  INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(1, s->pc)); //ECALL
   //TO Fix, maybe have potential bugs...
   INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, 
                                                               if(rd == 0)
